@@ -1,0 +1,9 @@
+# Ignore everything
+*
+
+# But keep these files
+!.gitignore
+!README.md
+!LICENSE
+!src/
+!src/App.jsx
