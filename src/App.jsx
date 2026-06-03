@@ -100,12 +100,13 @@ export default function App() {
   const [feedback, setFeedback] = useState("");
   const [keys, setKeys] = useState(3);
   const [crystals, setCrystals] = useState(120);
+ HEAD
   const [nearObject, setNearObject] = useState(null);
-
   // WASD Key Movement Controller
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (view !== "game") return;
+HEAD
 
       const key = e.key.toLowerCase();
       const step = 15;
@@ -198,6 +199,68 @@ export default function App() {
       }
     }
 
+      const key = e.key.toLowerCase();
+      const step = 15;
+
+      setPlayerPos((prev) => {
+        let newX = prev.x;
+        let newY = prev.y;
+
+        if (key === "w" || key === "arrowup")
+          newY = Math.max(260, prev.y - step);
+        if (key === "s" || key === "arrowdown")
+          newY = Math.min(420, prev.y + step);
+        if (key === "a" || key === "arrowleft")
+          newX = Math.max(150, prev.x - step);
+        if (key === "d" || key === "arrowright")
+          newX = Math.min(750, prev.x + step);
+
+        return { x: newX, y: newY };
+      });
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [view]);
+
+  // Handle On-screen WASD Clicks
+  const handleMove = (dir) => {
+    const step = 20;
+    setPlayerPos((prev) => {
+      let newX = prev.x;
+      let newY = prev.y;
+      if (dir === "W") newY = Math.max(260, prev.y - step);
+      if (dir === "S") newY = Math.min(420, prev.y + step);
+      if (dir === "A") newX = Math.max(150, prev.x - step);
+      if (dir === "D") newX = Math.min(750, prev.x + step);
+      return { x: newX, y: newY };
+    });
+  };
+
+  // Puzzle Solvers
+  const verifyPuzzle = () => {
+    const cleanInput = inputCode.trim();
+
+    if (activePuzzle === "newspaper") {
+      const h1Regex = /^<h1>\s*(.*?)\s*<\/h1>$/i;
+      const match = cleanInput.match(h1Regex);
+
+      if (match && match[1].length > 0) {
+        setSolvedObjects([...solvedObjects, "newspaper"]);
+        setFeedback(
+          "Success! The headline binds to the newspaper, and a brass key materializes."
+        );
+        setKeys((prev) => prev + 1);
+        setActivePuzzle(null);
+        setInputCode("");
+      } else {
+        setFeedback(
+          "The incantation fails. Ensure you type opening <h1> and closing </h1> tags around your text."
+        );
+      }
+    }
+
+>>>>>>> 3e01cb5c9626f41bfb1bbccdffcde0e88bf9b28d
     if (activePuzzle === "portrait") {
       if (
         cleanInput.toLowerCase().includes("<img src=") &&
